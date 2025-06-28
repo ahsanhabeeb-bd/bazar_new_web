@@ -86,12 +86,15 @@ class _PipilikaLoginState extends State<PipilikaLogin> {
     String label,
     bool isPassword,
   ) {
-    return TextFormField(
-      controller: controller,
-      obscureText: isPassword,
-      decoration: InputDecoration(labelText: label),
-      validator:
-          (value) => value == null || value.isEmpty ? 'Enter $label' : null,
+    return SizedBox(
+      width: 250,
+      child: TextFormField(
+        controller: controller,
+        obscureText: isPassword,
+        decoration: InputDecoration(labelText: label),
+        validator:
+            (value) => value == null || value.isEmpty ? 'Enter $label' : null,
+      ),
     );
   }
 
@@ -103,30 +106,32 @@ class _PipilikaLoginState extends State<PipilikaLogin> {
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildTextField(_email, "Login ID", false),
-              _buildTextField(_password, "Password", true),
-              const SizedBox(height: 20),
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                    onPressed: _login,
-                    child: const Text("Login"),
-                  ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildTextField(_email, "Login ID", false),
+                _buildTextField(_password, "Password", true),
+                const SizedBox(height: 20),
+                _isLoading
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                      onPressed: _login,
+                      child: const Text("Login"),
+                    ),
 
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => PipilikaRegistration()),
-                  );
-                },
-                child: const Text("Pipirica Registration"),
-              ),
-            ],
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => PipilikaRegistration()),
+                    );
+                  },
+                  child: const Text("Pipirica Registration"),
+                ),
+              ],
+            ),
           ),
         ),
       ),

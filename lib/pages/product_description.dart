@@ -142,223 +142,219 @@ class _NewProductDescriptionState extends State<NewProductDescription> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 🔹 Main Image
+                    // 🔹 Main Row - বাম পাশে ছোট ছবি, দান পাশে বড় ছবি ও details
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        height: 300,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey, width: 2),
-                          image: DecorationImage(
-                            image: NetworkImage(mainImage),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // 🔹 Thumbnail Images (3 in a row)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _thumbnailImage(product!['images']['main']),
-                          if (product!['images']['image2'] != null)
-                            _thumbnailImage(product!['images']['image2']),
-                          if (product!['images']['image3'] != null)
-                            _thumbnailImage(product!['images']['image3']),
-                        ],
-                      ),
-                    ),
-
-                    // 🔹 Product Details
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0, top: 10),
-                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            product!['name'],
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-
-                          // ✅ **Show Prices Based on Role & Status**
-                          if (userRole == "vendor" &&
-                              userStatus == "accepted") ...[
-                            Text(
-                              'Vendor: ${product!['vendorPrice']} Tk',
-                              style: _priceStyle(),
-                            ),
-                            Text(
-                              'Reseller: ${product!['resellerPrice']} Tk',
-                              style: _priceStyle(),
-                            ),
-                            Text(
-                              'Customer: ${product!['customerPrice']} Tk',
-                              style: _priceStyle(),
-                            ),
-                          ] else if (userRole == "reseller" &&
-                              userStatus == "accepted") ...[
-                            Text(
-                              'Reseller: ${product!['resellerPrice']} Tk',
-                              style: _priceStyle(),
-                            ),
-                            Text(
-                              'Customer: ${product!['customerPrice']} Tk',
-                              style: _priceStyle(),
-                            ),
-                          ] else if (userRole == "pipilika" &&
-                              userStatus == "accepted") ...[
-                            Text(
-                              'Pipirica: ${product!['pipilikaPrice']} Tk',
-                              style: _priceStyle(),
-                            ),
-                          ] else ...[
-                            Text(
-                              'Price: ${product!['customerPrice']} Tk',
-                              style: _priceStyle(),
-                            ),
-                          ],
-
-                          const SizedBox(height: 10),
-                          Text(
-                            "Details:",
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            product!['details'] ?? "No description available",
-                            style: const TextStyle(fontSize: 16),
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          // 🔹 Buy & Add to Cart Buttons
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          // 🔹 বাম পাশের Column - 3টি ছোট ছবি
+                          Column(
                             children: [
-                              FutureBuilder(
-                                future: SharedPreferences.getInstance(),
-                                builder: (
-                                  context,
-                                  AsyncSnapshot<SharedPreferences>
-                                  prefsSnapshot,
-                                ) {
-                                  if (!prefsSnapshot.hasData) {
-                                    return const CircularProgressIndicator(); // or empty button
-                                  }
-
-                                  final prefs = prefsSnapshot.data!;
-                                  final String? clientId = prefs.getString(
-                                    "id",
-                                  );
-                                  final String? role = prefs.getString("role");
-
-                                  print("🟢 Client ID: $clientId, Role: $role");
-
-                                  if (clientId == null || role == null) {
-                                    return const Text("Please login first");
-                                  }
-
-                                  return StreamBuilder<DocumentSnapshot>(
-                                    stream:
-                                        FirebaseFirestore.instance
-                                            .collection(
-                                              role == "reseller"
-                                                  ? "resellers"
-                                                  : role == "pipilika"
-                                                  ? "pipilikas"
-                                                  : "clients",
-                                            )
-                                            .doc(clientId)
-                                            .collection("cart")
-                                            .doc(widget.productId)
-                                            .snapshots(),
-                                    builder: (context, snapshot) {
-                                      bool isAdded =
-                                          snapshot.data?.data() != null &&
-                                          (snapshot.data!.data()
-                                                  as Map<
-                                                    String,
-                                                    dynamic
-                                                  >)["isAdded"] ==
-                                              true;
-
-                                      return Container(
-                                        height: 58,
-                                        width: 160,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                          color:
-                                              isAdded
-                                                  ? Colors.grey
-                                                  : Colors.orange,
-                                        ),
-                                        child: TextButton(
-                                          onPressed:
-                                              isAdded
-                                                  ? null
-                                                  : () async {
-                                                    await addToCart(
-                                                      context: context,
-                                                      clientId: clientId,
-                                                      role: role,
-                                                      productId:
-                                                          widget.productId,
-                                                      productName:
-                                                          product!['name'],
-                                                      productImage:
-                                                          product!['images']['main'],
-
-                                                      customerPrice:
-                                                          (product!['customerPrice']
-                                                                  as num)
-                                                              .toDouble(),
-                                                      resellerPrice:
-                                                          (product!['resellerPrice']
-                                                                  as num)
-                                                              .toDouble(),
-                                                      pipilikaPrice:
-                                                          (product!['pipilikaPrice']
-                                                                  as num)
-                                                              .toDouble(),
-                                                      vendorId:
-                                                          product!['vendorId'],
-                                                    );
-                                                  },
-                                          child: Text(
-                                            isAdded ? "Added" : "Add to Cart",
-                                            style: const TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-
-                              // const SizedBox(width: 20),
-                              // _actionButton("Buy Now", Colors.blue, () {
-                              //   print("Buying Now");
-                              // }),
+                              _thumbnailImage(product!['images']['main']),
+                              const SizedBox(height: 8),
+                              if (product!['images']['image2'] != null)
+                                _thumbnailImage(product!['images']['image2']),
+                              const SizedBox(height: 8),
+                              if (product!['images']['image3'] != null)
+                                _thumbnailImage(product!['images']['image3']),
                             ],
                           ),
+
+                          const SizedBox(width: 10),
+
+                          // 🔹 দান পাশের Column - বড় ছবি ও Product Details
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // বড় ছবি
+                              Container(
+                                height: 370,
+                                width: 370,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 2,
+                                  ),
+                                  image: DecorationImage(
+                                    image: NetworkImage(mainImage),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+
+                              const SizedBox(height: 15),
+                            ],
+                          ),
+                          const SizedBox(width: 15),
+                          Column(
+                            children: [
+                              // Product Name
+                              Text(
+                                product!['name'],
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+
+                              // ✅ Price অংশ (আগের মতোই)
+                              if (userRole == "vendor" &&
+                                  userStatus == "accepted") ...[
+                                Text(
+                                  'Vendor: ${product!['vendorPrice']} Tk',
+                                  style: _priceStyle(),
+                                ),
+                                Text(
+                                  'Reseller: ${product!['resellerPrice']} Tk',
+                                  style: _priceStyle(),
+                                ),
+                                Text(
+                                  'Customer: ${product!['customerPrice']} Tk',
+                                  style: _priceStyle(),
+                                ),
+                              ] else if (userRole == "reseller" &&
+                                  userStatus == "accepted") ...[
+                                Text(
+                                  'Reseller: ${product!['resellerPrice']} Tk',
+                                  style: _priceStyle(),
+                                ),
+                                Text(
+                                  'Customer: ${product!['customerPrice']} Tk',
+                                  style: _priceStyle(),
+                                ),
+                              ] else if (userRole == "pipilika" &&
+                                  userStatus == "accepted") ...[
+                                Text(
+                                  'Pipirica: ${product!['pipilikaPrice']} Tk',
+                                  style: _priceStyle(),
+                                ),
+                              ] else ...[
+                                Text(
+                                  'Price: ${product!['customerPrice']} Tk',
+                                  style: _priceStyle(),
+                                ),
+                              ],
+
+                              const SizedBox(height: 15),
+
+                              // Details
+                              Text(
+                                "Details:",
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                product!['details'] ??
+                                    "No description available",
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                          SizedBox(width: 10),
                         ],
                       ),
                     ),
+
+                    const SizedBox(height: 20),
+
+                    // 🔹 Add to Cart Button - Row এর নিচে
+                    Center(
+                      child: FutureBuilder(
+                        future: SharedPreferences.getInstance(),
+                        builder: (
+                          context,
+                          AsyncSnapshot<SharedPreferences> prefsSnapshot,
+                        ) {
+                          if (!prefsSnapshot.hasData) {
+                            return const CircularProgressIndicator();
+                          }
+
+                          final prefs = prefsSnapshot.data!;
+                          final String? clientId = prefs.getString("id");
+                          final String? role = prefs.getString("role");
+
+                          if (clientId == null || role == null) {
+                            return const Text("Please login first");
+                          }
+
+                          return StreamBuilder<DocumentSnapshot>(
+                            stream:
+                                FirebaseFirestore.instance
+                                    .collection(
+                                      role == "reseller"
+                                          ? "resellers"
+                                          : role == "pipilika"
+                                          ? "pipilikas"
+                                          : "clients",
+                                    )
+                                    .doc(clientId)
+                                    .collection("cart")
+                                    .doc(widget.productId)
+                                    .snapshots(),
+                            builder: (context, snapshot) {
+                              bool isAdded =
+                                  snapshot.data?.data() != null &&
+                                  (snapshot.data!.data()
+                                          as Map<String, dynamic>)["isAdded"] ==
+                                      true;
+
+                              return Container(
+                                height: 58,
+                                width: 160,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: isAdded ? Colors.grey : Colors.orange,
+                                ),
+                                child: TextButton(
+                                  onPressed:
+                                      isAdded
+                                          ? null
+                                          : () async {
+                                            await addToCart(
+                                              context: context,
+                                              clientId: clientId,
+                                              role: role,
+                                              productId: widget.productId,
+                                              productName: product!['name'],
+                                              productImage:
+                                                  product!['images']['main'],
+                                              customerPrice:
+                                                  (product!['customerPrice']
+                                                          as num)
+                                                      .toDouble(),
+                                              resellerPrice:
+                                                  (product!['resellerPrice']
+                                                          as num)
+                                                      .toDouble(),
+                                              pipilikaPrice:
+                                                  (product!['pipilikaPrice']
+                                                          as num)
+                                                      .toDouble(),
+                                              vendorId: product!['vendorId'],
+                                            );
+                                          },
+                                  child: Text(
+                                    isAdded ? "Added" : "Add to Cart",
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -374,8 +370,8 @@ class _NewProductDescriptionState extends State<NewProductDescription> {
         });
       },
       child: Container(
-        height: 80,
-        width: 80,
+        height: 120,
+        width: 120,
         margin: const EdgeInsets.symmetric(horizontal: 5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),

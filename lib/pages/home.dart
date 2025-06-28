@@ -285,7 +285,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Image.asset('assets/images/logo.png', height: 50, width: 80),
+        title: Image.asset('assets/images/logo.png', height: 50, width: 250),
         backgroundColor: Colors.white,
         actions: [
           PopupMenuButton<String>(
@@ -339,6 +339,7 @@ class _HomeState extends State<Home> {
                   ),
                 ],
           ),
+
           IconButton(
             icon:
                 profilePictureUrl != null && profilePictureUrl!.isNotEmpty
@@ -669,18 +670,32 @@ class _HomeState extends State<Home> {
                     ),
 
                   SizedBox(height: 8),
-                  banner(imageUrls1: sliderProvider.imageUrls1),
-                  SizedBox(height: 8),
-                  events1(
-                    imageUrls2: sliderProvider.imageUrls2,
-                    imageUrls3: sliderProvider.imageUrls3,
+                  Row(
+                    children: [
+                      banner(imageUrls1: sliderProvider.imageUrls1),
+
+                      // Right side with events1 & events2 stacked in a column
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              events1(
+                                imageUrls2: sliderProvider.imageUrls2,
+                                imageUrls3: sliderProvider.imageUrls3,
+                              ),
+                              SizedBox(height: 8),
+                              events2(
+                                imageUrls4: sliderProvider.imageUrls4,
+                                imageUrls5: sliderProvider.imageUrls5,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 8),
-                  events2(
-                    imageUrls4: sliderProvider.imageUrls4,
-                    imageUrls5: sliderProvider.imageUrls5,
-                  ),
-                  //SizedBox(height: 8),
+
                   Brand_Scroll(),
                   Row(
                     children: [

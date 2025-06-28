@@ -1,1 +1,35 @@
-{"flutter":{"platforms":{"dart":{"lib/firebase_options.dart":{"projectId":"bazar-4a006","configurations":{"android":"1:755860889627:android:641f9364819f0a042b98be","web":"1:755860889627:web:366138cd8328788f2b98be"}}},"android":{"default":{"projectId":"bazar-4a006","appId":"1:755860889627:android:641f9364819f0a042b98be","fileOutput":"android/app/google-services.json"}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "oboef-bazar",
+          "configurations": {
+            "android": "1:548888356998:android:5a758fde89a891c9b58907"
+          }
+        }
+      },
+      "android": {
+        "default": {
+          "projectId": "oboef-bazar",
+          "appId": "1:548888356998:android:5a758fde89a891c9b58907",
+          "fileOutput": "android/app/google-services.json"
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

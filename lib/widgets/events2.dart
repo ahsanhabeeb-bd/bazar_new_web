@@ -19,7 +19,7 @@ class events2 extends StatelessWidget {
         Expanded(
           child: CarouselSlider(
             options: CarouselOptions(
-              height: 100,
+              height: 200,
               autoPlay: true,
               autoPlayInterval: Duration(seconds: 3),
               viewportFraction: 1.0,
@@ -32,7 +32,7 @@ class events2 extends StatelessWidget {
                     child: Image.network(
                       imageUrl,
                       width: double.infinity,
-                      height: 100,
+                      height: 200,
                       fit: BoxFit.cover,
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) return child;
@@ -58,7 +58,7 @@ class events2 extends StatelessWidget {
         Expanded(
           child: CarouselSlider(
             options: CarouselOptions(
-              height: 100,
+              height: 200,
               autoPlay: true,
               autoPlayInterval: Duration(seconds: 4),
               viewportFraction: 1.0,
@@ -71,7 +71,7 @@ class events2 extends StatelessWidget {
                     child: Image.network(
                       imageUrl,
                       width: double.infinity,
-                      height: 100,
+                      height: 200,
                       fit: BoxFit.cover,
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) return child;

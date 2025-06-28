@@ -162,10 +162,10 @@ class _Trending_ProductState extends State<Trending_Product> {
             shrinkWrap: true,
             physics: const BouncingScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // Mobile only: 2 columns
+              crossAxisCount: 3, // Mobile only: 2 columns
               crossAxisSpacing: 10.0,
               mainAxisSpacing: 10.0,
-              childAspectRatio: long,
+              // childAspectRatio: long,
             ),
             itemCount: products.length,
             itemBuilder: (context, index) {
@@ -217,7 +217,7 @@ class _Trending_ProductState extends State<Trending_Product> {
                     children: [
                       Container(
                         width: double.infinity,
-                        height: 130,
+                        height: 300,
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: NetworkImage(productImage),

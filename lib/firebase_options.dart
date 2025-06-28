@@ -50,21 +50,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBVMr9feaTs8zEkZTL6EzWZ_ZUpNhewM6k',
-    appId: '1:755860889627:web:366138cd8328788f2b98be',
-    messagingSenderId: '755860889627',
-    projectId: 'bazar-4a006',
-    authDomain: 'bazar-4a006.firebaseapp.com',
-    storageBucket: 'bazar-4a006.firebasestorage.app',
-    measurementId: 'G-QB5LRD0NQD',
+    apiKey: 'AIzaSyAs_VGnt85ZEL7f1rlc2B0IaJKNwD60jn8',
+    appId: '1:548888356998:web:882651a25f5c9c19b58907',
+    messagingSenderId: '548888356998',
+    projectId: 'oboef-bazar',
+    authDomain: 'oboef-bazar.firebaseapp.com',
+    storageBucket: 'oboef-bazar.firebasestorage.app',
+    measurementId: 'G-C0DJSPK6QQ',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCIijbnEpBg_9Q4VvY_C_XI2vEw10iHbBM',
-    appId: '1:755860889627:android:641f9364819f0a042b98be',
-    messagingSenderId: '755860889627',
-    projectId: 'bazar-4a006',
-    storageBucket: 'bazar-4a006.firebasestorage.app',
+    apiKey: 'AIzaSyA4c4fIwjCjtzwZvbKciLg0QhDxRWL11ts',
+    appId: '1:548888356998:android:5a758fde89a891c9b58907',
+    messagingSenderId: '548888356998',
+    projectId: 'oboef-bazar',
+    storageBucket: 'oboef-bazar.firebasestorage.app',
   );
 
 }

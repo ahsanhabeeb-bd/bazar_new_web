@@ -1,32 +1,13 @@
 {
   "project_info": {
-    "project_number": "755860889627",
-    "project_id": "bazar-4a006",
-    "storage_bucket": "bazar-4a006.firebasestorage.app"
+    "project_number": "548888356998",
+    "project_id": "oboef-bazar",
+    "storage_bucket": "oboef-bazar.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:755860889627:android:2ddb9e21f731b44e2b98be",
-        "android_client_info": {
-          "package_name": "com.example.bazar_new_admin"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCIijbnEpBg_9Q4VvY_C_XI2vEw10iHbBM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:755860889627:android:2d1b9a9e38be06c22b98be",
+        "mobilesdk_app_id": "1:548888356998:android:e33ff792cd6fdd3eb58907",
         "android_client_info": {
           "package_name": "com.example.bazar_new_mobile"
         }
@@ -34,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCIijbnEpBg_9Q4VvY_C_XI2vEw10iHbBM"
+          "current_key": "AIzaSyA4c4fIwjCjtzwZvbKciLg0QhDxRWL11ts"
         }
       ],
       "services": {
@@ -45,7 +26,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:755860889627:android:641f9364819f0a042b98be",
+        "mobilesdk_app_id": "1:548888356998:android:5a758fde89a891c9b58907",
         "android_client_info": {
           "package_name": "com.example.bazar_new_web"
         }
@@ -53,7 +34,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCIijbnEpBg_9Q4VvY_C_XI2vEw10iHbBM"
+          "current_key": "AIzaSyA4c4fIwjCjtzwZvbKciLg0QhDxRWL11ts"
         }
       ],
       "services": {
