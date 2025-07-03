@@ -185,7 +185,7 @@ class _Trending_ProductState extends State<Trending_Product> {
               // 🔹 Ensure main image exists
               String productImage =
                   product['images']?['main'] ??
-                  "https://example.com/default.jpg";
+                  "assets/images/logo.png";
 
               return InkWell(
                 onTap: () {

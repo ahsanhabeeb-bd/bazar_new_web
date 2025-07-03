@@ -181,6 +181,22 @@ class _Registrationresallertate extends State<RegistrationResaler> {
 
               SizedBox(height: 20),
 
+              _buildUploadSection(
+                title: "Upload Company Logo",
+                onPick: () => _pickImage(type: "logo"),
+                imageBytes: _logoBytes,
+              ),
+
+              SizedBox(height: 20),
+
+              _buildUploadSection(
+                title: "Upload NID",
+                onPick: () => _pickImage(type: "nid"),
+                imageBytes: _nidBytes,
+              ),
+
+              SizedBox(height: 20),
+
               GestureDetector(
                 onTap: _registerResaler,
                 child: Container(

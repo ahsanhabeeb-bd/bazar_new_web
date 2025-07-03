@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:bazar_new_web/vendor/accepted_products.dart';
@@ -8,7 +7,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -29,9 +27,10 @@ class _MyProductsState extends State<MyProducts> {
   String? _vendorId;
   bool _isLoading = false;
 
-  File? _mainImage;
-  File? _image2;
-  File? _image3;
+  // Use Uint8List for web compatibility
+  Uint8List? _mainImageBytes;
+  Uint8List? _image2Bytes;
+  Uint8List? _image3Bytes;
 
   @override
   void initState() {
@@ -47,46 +46,40 @@ class _MyProductsState extends State<MyProducts> {
     });
   }
 
-  /// Pick image from gallery
+  /// Pick image from gallery and read bytes
   Future<void> _pickImage(String imageType, Function setState) async {
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
     );
     if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
       setState(() {
-        if (imageType == "main") _mainImage = File(pickedFile.path);
-        if (imageType == "image2") _image2 = File(pickedFile.path);
-        if (imageType == "image3") _image3 = File(pickedFile.path);
+        if (imageType == "main") _mainImageBytes = bytes;
+        if (imageType == "image2") _image2Bytes = bytes;
+        if (imageType == "image3") _image3Bytes = bytes;
       });
     }
   }
 
-  /// Compress and upload the image to Firebase Storage
-  Future<String?> _uploadImage(File? image, String fileName) async {
-    if (image == null) return null;
+  /// Compress and upload the image to Firebase Storage from bytes
+  Future<String?> _uploadImage(Uint8List? imageBytes, String fileName) async {
+    if (imageBytes == null) return null;
 
     try {
-      // Print original file size
-      int originalSize = await image.length();
-      print("Original Image Size: ${originalSize / 1024} KB");
+      print("Original Image Size: ${imageBytes.lengthInBytes / 1024} KB");
 
       // Compress the image
-      final dir = await getTemporaryDirectory();
-      final targetPath = "${dir.absolute.path}/$fileName.jpg";
+      Uint8List? compressedBytes = await _compressImage(imageBytes);
 
-      File? compressedImage = await _compressImage(image, targetPath);
-
-      // Print compressed file size
-      if (compressedImage != null) {
-        int compressedSize = await compressedImage.length();
-        print("Compressed Image Size: ${compressedSize / 1024} KB");
+      if (compressedBytes != null) {
+        print("Compressed Image Size: ${compressedBytes.lengthInBytes / 1024} KB");
 
         Reference storageRef = FirebaseStorage.instance
             .ref()
             .child("products")
             .child("$fileName.jpg");
 
-        await storageRef.putFile(compressedImage);
+        await storageRef.putData(compressedBytes);
         return await storageRef.getDownloadURL();
       } else {
         print("Image compression failed");
@@ -101,18 +94,13 @@ class _MyProductsState extends State<MyProducts> {
     }
   }
 
-  /// Compress the image using flutter_image_compress
-  Future<File?> _compressImage(File file, String targetPath) async {
+  /// Compress the image using flutter_image_compress from a list of bytes
+  Future<Uint8List?> _compressImage(Uint8List imageBytes) async {
     try {
-      Uint8List? result = await FlutterImageCompress.compressWithFile(
-        file.absolute.path,
+      return await FlutterImageCompress.compressWithList(
+        imageBytes,
         quality: 70, // Adjust compression quality (1-100)
       );
-
-      if (result != null) {
-        File compressedFile = File(targetPath)..writeAsBytesSync(result);
-        return compressedFile;
-      }
     } catch (e) {
       print("Compression error: $e");
     }
@@ -131,7 +119,7 @@ class _MyProductsState extends State<MyProducts> {
         _vendorPriceController.text.isEmpty ||
         _selectedCategoryId == null ||
         _selectedSubcategoryId == null ||
-        _mainImage == null) {
+        _mainImageBytes == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please fill all required fields.")),
       );
@@ -144,9 +132,9 @@ class _MyProductsState extends State<MyProducts> {
 
     try {
       String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
-      String? mainImageUrl = await _uploadImage(_mainImage, "main_$timestamp");
-      String? image2Url = await _uploadImage(_image2, "image2_$timestamp");
-      String? image3Url = await _uploadImage(_image3, "image3_$timestamp");
+      String? mainImageUrl = await _uploadImage(_mainImageBytes, "main_$timestamp");
+      String? image2Url = await _uploadImage(_image2Bytes, "image2_$timestamp");
+      String? image3Url = await _uploadImage(_image3Bytes, "image3_$timestamp");
 
       await FirebaseFirestore.instance
           .collection("products")
@@ -176,9 +164,9 @@ class _MyProductsState extends State<MyProducts> {
       _detailsController.clear();
       _selectedCategoryId = null;
       _selectedSubcategoryId = null;
-      _mainImage = null;
-      _image2 = null;
-      _image3 = null;
+      _mainImageBytes = null;
+      _image2Bytes = null;
+      _image3Bytes = null;
 
       Navigator.pop(context);
     } catch (e) {
@@ -292,19 +280,19 @@ class _MyProductsState extends State<MyProducts> {
                     // Image Upload with Immediate Preview
                     _buildImageUploadButton(
                       "Main Picture",
-                      _mainImage,
+                      _mainImageBytes,
                       "main",
                       setState,
                     ),
                     _buildImageUploadButton(
                       "Picture 2",
-                      _image2,
+                      _image2Bytes,
                       "image2",
                       setState,
                     ),
                     _buildImageUploadButton(
                       "Picture 3",
-                      _image3,
+                      _image3Bytes,
                       "image3",
                       setState,
                     ),
@@ -356,7 +344,7 @@ class _MyProductsState extends State<MyProducts> {
 
   Widget _buildImageUploadButton(
     String label,
-    File? image,
+    Uint8List? imageBytes,
     String imageType,
     Function setState,
   ) {
@@ -373,10 +361,10 @@ class _MyProductsState extends State<MyProducts> {
               borderRadius: BorderRadius.circular(8),
             ),
             child:
-                image != null
+                imageBytes != null
                     ? ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.file(image, fit: BoxFit.cover),
+                      child: Image.memory(imageBytes, fit: BoxFit.cover),
                     )
                     : Icon(Icons.image, size: 40, color: Colors.grey),
           ),
@@ -415,9 +403,15 @@ class _MyProductsState extends State<MyProducts> {
         ),
         body: TabBarView(
           children: [
-            PendingProducts(vendorId: _vendorId!), // Pass vendorId
-            AcceptedProducts(vendorId: _vendorId!), // Pass vendorId
-            RejectedProducts(vendorId: _vendorId!), // Pass vendorId
+            if (_vendorId != null) ...[
+              PendingProducts(vendorId: _vendorId!),
+              AcceptedProducts(vendorId: _vendorId!),
+              RejectedProducts(vendorId: _vendorId!),
+            ] else ...[
+              Center(child: CircularProgressIndicator()),
+              Center(child: CircularProgressIndicator()),
+              Center(child: CircularProgressIndicator()),
+            ]
           ],
         ),
       ),
