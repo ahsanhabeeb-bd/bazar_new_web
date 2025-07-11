@@ -670,30 +670,54 @@ class _HomeState extends State<Home> {
                     ),
 
                   SizedBox(height: 8),
-                  Row(
-                    children: [
-                      banner(imageUrls1: sliderProvider.imageUrls1),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth < 800) {
+                        // Mobile layout
+                        return Column(
+                          children: [
+                            banner(imageUrls1: sliderProvider.imageUrls1),
+                            const SizedBox(height: 8),
+                            events1(
+                              imageUrls2: sliderProvider.imageUrls2,
+                              imageUrls3: sliderProvider.imageUrls3,
+                            ),
+                            const SizedBox(height: 8),
+                            events2(
+                              imageUrls4: sliderProvider.imageUrls4,
+                              imageUrls5: sliderProvider.imageUrls5,
+                            ),
+                          ],
+                        );
+                      } else {
+                        // Desktop layout
+                        return Row(
+                          children: [
+                            banner(imageUrls1: sliderProvider.imageUrls1),
 
-                      // Right side with events1 & events2 stacked in a column
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              events1(
-                                imageUrls2: sliderProvider.imageUrls2,
-                                imageUrls3: sliderProvider.imageUrls3,
+                            // Right side with events1 & events2 stacked in a column
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    events1(
+                                      imageUrls2: sliderProvider.imageUrls2,
+                                      imageUrls3: sliderProvider.imageUrls3,
+                                    ),
+                                    SizedBox(height: 8),
+                                    events2(
+                                      imageUrls4: sliderProvider.imageUrls4,
+                                      imageUrls5: sliderProvider.imageUrls5,
+                                    ),
+                                  ],
+                                ),
                               ),
-                              SizedBox(height: 8),
-                              events2(
-                                imageUrls4: sliderProvider.imageUrls4,
-                                imageUrls5: sliderProvider.imageUrls5,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
 
                   Brand_Scroll(),

@@ -8,19 +8,29 @@ class banner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width * .45,
-      child: CarouselSlider(
-        options: CarouselOptions(
-          height: 400,
-          autoPlay: true,
-          autoPlayInterval: Duration(seconds: 3),
-          viewportFraction: 1.0,
-          enlargeCenterPage: false,
-          enableInfiniteScroll: true,
-        ),
-        items:
-            imageUrls1.map((imageUrl) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double bannerWidth;
+        if (constraints.maxWidth < 800) {
+          // Mobile view
+          bannerWidth = MediaQuery.of(context).size.width;
+        } else {
+          // Desktop view
+          bannerWidth = MediaQuery.of(context).size.width * .45;
+        }
+
+        return SizedBox(
+          width: bannerWidth,
+          child: CarouselSlider(
+            options: CarouselOptions(
+              height: 400,
+              autoPlay: true,
+              autoPlayInterval: Duration(seconds: 3),
+              viewportFraction: 1.0,
+              enlargeCenterPage: false,
+              enableInfiniteScroll: true,
+            ),
+            items: imageUrls1.map((imageUrl) {
               return ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
@@ -44,7 +54,9 @@ class banner extends StatelessWidget {
                 ),
               );
             }).toList(),
-      ),
+          ),
+        );
+      },
     );
   }
 }
