@@ -394,6 +394,10 @@ class _CartPageState extends State<CartPage> {
                           onPressed: () {
                             _showCheckoutDialog();
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green[400], // A pleasant green
+                            foregroundColor: Colors.white, // White text
+                          ),
                           child: const Text("Buy Now"),
                         ),
                         Text(

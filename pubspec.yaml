@@ -79,7 +79,7 @@ flutter:
     - assets/images/
     - assets/audio/video1.mp4
     - assets/audio/video2.mp4
-    - assets/audio/intro.mp4
+    - assets/audio/intro1.mp4
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

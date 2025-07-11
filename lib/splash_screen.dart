@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     _checkLoginStatus();
     _controller =
-        VideoPlayerController.asset('assets/audio/intro.mp4')
+        VideoPlayerController.asset('assets/audio/intro1.mp4')
           ..setLooping(true)
           ..setVolume(0.0) // 🔇 Mute
           ..initialize().then((_) {
@@ -110,16 +110,6 @@ class _SplashScreenState extends State<SplashScreen> {
                       width: _controller.value.size.width,
                       height: _controller.value.size.height,
                       child: VideoPlayer(_controller),
-                    ),
-                  ),
-
-                  // 🔹 Optional overlay (e.g., logo at top-center)
-                  Positioned(
-                    top: 60,
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: Image.asset("assets/images/logo.png", height: 100),
                     ),
                   ),
 

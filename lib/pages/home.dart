@@ -36,13 +36,13 @@ class _HomeState extends State<Home> {
   String? _selectedSubcategory;
   String? profilePictureUrl;
   String? userRole;
+  String? userId;
 
   @override
   void initState() {
     super.initState();
     fetchSlidersAndCategories();
     fetchCategories();
-    _loadProfilePicture();
     _loadUserProfile();
   }
 
@@ -71,6 +71,7 @@ class _HomeState extends State<Home> {
     setState(() {
       profilePictureUrl = prefs.getString("profilePicture");
       userRole = prefs.getString("role"); // Load role from SharedPreferences
+      userId = prefs.getString("id"); // Load user ID
     });
 
     print("🟢 Loaded Role: $userRole"); // Debugging
@@ -350,47 +351,73 @@ class _HomeState extends State<Home> {
                     : const Icon(Icons.person, size: 30, color: Colors.black),
             onPressed: () => _navigateToHome(context),
           ),
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart, size: 24),
-                onPressed: () async {
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  String? id = prefs.getString("id");
-                  String? role = prefs.getString("role");
+          StreamBuilder<QuerySnapshot>(
+            stream:
+                (userId != null && userRole != null)
+                    ? FirebaseFirestore.instance
+                        .collection(
+                          userRole == "reseller"
+                              ? "resellers"
+                              : userRole == "pipilika"
+                              ? "pipilikas"
+                              : "clients",
+                        )
+                        .doc(userId)
+                        .collection("cart")
+                        .snapshots()
+                    : null,
+            builder: (context, snapshot) {
+              int cartItemCount = 0;
+              if (snapshot.hasData) {
+                cartItemCount = snapshot.data!.docs.length;
+              }
 
-                  if (id == null || id.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Please login to view cart"),
-                      ),
-                    );
-                    return;
-                  }
+              return Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.shopping_cart, size: 24),
+                    onPressed: () async {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      String? id = prefs.getString("id");
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return CartPage();
-                      },
-                    ),
-                  );
-                }, // Disabled, handled by GestureDetector
-              ),
-              Positioned(
-                right: 0,
-                child: CircleAvatar(
-                  backgroundColor: Colors.red,
-                  radius: 6,
-                  child: Text(
-                    "0", // You can make this dynamic by fetching cart count
-                    style: const TextStyle(fontSize: 8, color: Colors.white),
+                      if (id == null || id.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Please login to view cart"),
+                          ),
+                        );
+                        return;
+                      }
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return CartPage();
+                          },
+                        ),
+                      );
+                    },
                   ),
-                ),
-              ),
-            ],
+                  if (cartItemCount > 0)
+                    Positioned(
+                      right: 0,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.red,
+                        radius: 8,
+                        child: Text(
+                          cartItemCount.toString(),
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
 
           IconButton(
