@@ -74,6 +74,19 @@ class _NewProductDescriptionState extends State<NewProductDescription> {
     );
   }
 
+  String _getCollectionForRole(String role) {
+    switch (role) {
+      case "vendor":
+        return "vendors";
+      case "reseller":
+        return "resellers";
+      case "pipilika":
+        return "pipilikas";
+      default:
+        return "clients";
+    }
+  }
+
   Future<void> addToCart({
     required BuildContext context,
     required String clientId,
@@ -87,13 +100,7 @@ class _NewProductDescriptionState extends State<NewProductDescription> {
     required String vendorId,
   }) async {
     final collection = FirebaseFirestore.instance
-        .collection(
-          role == "reseller"
-              ? "resellers"
-              : role == "pipilika"
-              ? "pipilikas"
-              : "clients",
-        )
+        .collection(_getCollectionForRole(role))
         .doc(clientId)
         .collection("cart");
 
@@ -304,13 +311,7 @@ class _NewProductDescriptionState extends State<NewProductDescription> {
                               return StreamBuilder<DocumentSnapshot>(
                                 stream:
                                     FirebaseFirestore.instance
-                                        .collection(
-                                          role == "reseller"
-                                              ? "resellers"
-                                              : role == "pipilika"
-                                              ? "pipilikas"
-                                              : "clients",
-                                        )
+                                        .collection(_getCollectionForRole(role))
                                         .doc(clientId)
                                         .collection("cart")
                                         .doc(widget.productId)
@@ -319,10 +320,8 @@ class _NewProductDescriptionState extends State<NewProductDescription> {
                                   bool isAdded =
                                       snapshot.data?.data() != null &&
                                       (snapshot.data!.data()
-                                              as Map<
-                                                String,
-                                                dynamic
-                                              >)["isAdded"] ==
+                                              as Map<String,
+                                                dynamic>)["isAdded"] ==
                                           true;
 
                                   return Container(
