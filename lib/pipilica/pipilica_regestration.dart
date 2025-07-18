@@ -270,7 +270,7 @@ class _PipilikaRegistrationState extends State<PipilikaRegistration> {
     if (!_formKey.currentState!.validate()) return;
     if (_profilePic == null || _nidPic == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text("Profile picture and NID image are required."),
           backgroundColor: Colors.red,
         ),
@@ -282,31 +282,33 @@ class _PipilikaRegistrationState extends State<PipilikaRegistration> {
 
     try {
       final referredBy = _referralId.text.trim();
+      int level = 1;
 
-      // ✅ রেফার UID টি ডেটাবেজে আছে কিনা যাচাই করুন
-      final refDoc =
-          await FirebaseFirestore.instance
-              .collection("pipilikas")
-              .doc(referredBy)
-              .get();
+      if (referredBy.isNotEmpty) {
+        // ✅ রেফার UID টি ডেটাবেজে আছে কিনা যাচাই করুন
+        final refDoc =
+            await FirebaseFirestore.instance
+                .collection("pipilikas")
+                .doc(referredBy)
+                .get();
 
-      if (!refDoc.exists) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Invalid referral ID. Please enter a valid UID."),
-            backgroundColor: Colors.red,
-          ),
-        );
-        setState(() => _isLoading = false);
-        return;
+        if (!refDoc.exists) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Invalid referral ID. Please enter a valid UID."),
+              backgroundColor: Colors.red,
+            ),
+          );
+          setState(() => _isLoading = false);
+          return;
+        }
+        level = (refDoc.data()?['level'] ?? 0) + 1;
       }
 
-      // ✅ UID এবং level তৈরি করুন
-      final uid = DateTime.now().millisecondsSinceEpoch.toString().substring(
-        0,
-        8,
-      );
-      final level = (refDoc.data()?['level'] ?? 0) + 1;
+      // ✅ UID এবং loginId তৈরি করুন
+      final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+      final uid = timestamp.substring(0, 8);
+      final loginId = timestamp.substring(timestamp.length - 8);
 
       final profileUrl = await _uploadToStorage(
         _profilePic,
@@ -316,6 +318,7 @@ class _PipilikaRegistrationState extends State<PipilikaRegistration> {
 
       final data = {
         "id": uid,
+        "loginId": loginId,
         "name": _name.text,
         "fatherName": _father.text,
         "motherName": _mother.text,
@@ -332,7 +335,7 @@ class _PipilikaRegistrationState extends State<PipilikaRegistration> {
         "nidPicture": nidUrl,
         "nomineeName": _nomineeName.text,
         "nomineeRelation": _nomineeRelation.text,
-        "status": "accepted",
+        "status": "pending",
         "role": "pipilika",
         "referredBy": referredBy,
         "downlines": [],
@@ -347,15 +350,17 @@ class _PipilikaRegistrationState extends State<PipilikaRegistration> {
           .set(data);
 
       // ✅ রেফারার ইউজারের ডকুমেন্টে downlines এ uid যোগ করুন
-      await FirebaseFirestore.instance
-          .collection("pipilikas")
-          .doc(referredBy)
-          .update({
-            "downlines": FieldValue.arrayUnion([uid]),
-          });
+      if (referredBy.isNotEmpty) {
+        await FirebaseFirestore.instance
+            .collection("pipilikas")
+            .doc(referredBy)
+            .update({
+              "downlines": FieldValue.arrayUnion([uid]),
+            });
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text("Registration successful!"),
           backgroundColor: Colors.green,
         ),

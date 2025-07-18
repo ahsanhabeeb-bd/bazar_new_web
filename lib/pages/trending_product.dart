@@ -186,14 +186,13 @@ class _Trending_ProductState extends State<Trending_Product> {
                       product['customerPrice']?.toString() ?? "0";
                   String resellerPrice =
                       product['resellerPrice']?.toString() ?? "0";
-                  String vendorPrice = product['vendorPrice']?.toString() ?? "0";
+                  //  String vendorPrice = product['vendorPrice']?.toString() ?? "0";
                   String pipilikaPrice =
                       product['pipilikaPrice']?.toString() ?? "0";
 
                   // 🔹 Ensure main image exists
                   String productImage =
-                      product['images']?['main'] ??
-                      "assets/images/logo.png";
+                      product['images']?['main'] ?? "assets/images/logo.png";
 
                   return InkWell(
                     onTap: () {
@@ -257,10 +256,10 @@ class _Trending_ProductState extends State<Trending_Product> {
                                 // ✅ **Show Prices Based on Role & Status**
                                 if (userRole == "vendor" &&
                                     userStatus == "accepted") ...[
-                                  Text(
-                                    'Vendor: ${vendorPrice} Tk',
-                                    style: _priceStyle(),
-                                  ),
+                                  // Text(
+                                  //   'Vendor: ${vendorPrice} Tk',
+                                  //   style: _priceStyle(),
+                                  // ),
                                   Text(
                                     'Reseller: ${resellerPrice} Tk',
                                     style: _priceStyle(),
@@ -313,9 +312,8 @@ class _Trending_ProductState extends State<Trending_Product> {
                                         }
 
                                         final prefs = prefsSnapshot.data!;
-                                        final String? clientId = prefs.getString(
-                                          "id",
-                                        );
+                                        final String? clientId = prefs
+                                            .getString("id");
                                         final String? role = prefs.getString(
                                           "role",
                                         );
@@ -329,9 +327,8 @@ class _Trending_ProductState extends State<Trending_Product> {
                                             height: 40,
                                             width: 70,
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(
-                                                5,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
                                               color: Colors.orange,
                                             ),
 
@@ -369,9 +366,8 @@ class _Trending_ProductState extends State<Trending_Product> {
                                               height: 40,
                                               width: 70,
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(
-                                                  5,
-                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
                                                 color:
                                                     isAdded
                                                         ? Colors.grey
@@ -386,7 +382,8 @@ class _Trending_ProductState extends State<Trending_Product> {
                                                             context: context,
                                                             clientId: clientId,
                                                             role: role,
-                                                            productId: productId,
+                                                            productId:
+                                                                productId,
                                                             productName:
                                                                 productName,
                                                             productImage:
